@@ -5,16 +5,21 @@ const config = require('./config')
 
 const app = express()
 
-app.get('/api/comics', async (req, res) => {
+app.get('/api/characters', async (req, res) => {
+    const { page = 1, limit = 20 } = req.query
     const ts = new Date().getTime().toString()
     const hash = md5(ts + config.marvel.privateKey + config.marvel.publicKey)
-    const url = `${config.marvel.baseUrl}/comics?ts=${ts}&apikey=${config.marvel.publicKey}&hash=${hash}`
-    console.log('hash: ', hash)
+    const url = `${config.marvel.baseUrl}/characters?ts=${ts}&apikey=${config.marvel.publicKey}&hash=${hash}`
 
     try {
         const response = await axios.get(url)
-        console.log('response: ', response)
-        res.json(response.data)
+        const { total, count, results } = response.data.data
+        const totalPages = Math.ceil(total / limit)
+        const nextPage = page < totalPages ? +page + 1 : null
+        const prevPage = page > 1 ? +page - 1 : null
+        const pagination = { totalPages, nextPage, prevPage }
+        console.log('response result: ', response.data.data)
+        res.json({ total, count, results, pagination })
     } catch (error) {
         console.error(error)
         await res.json(error)
