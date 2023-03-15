@@ -1,0 +1,17 @@
+{
+  "name": "marvelHeroProject",
+  "version": "1.0.0",
+  "description": "Application mobile first all Marvel api build with node and Vue",
+  "main": "server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "author": "Tess",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "dotenv": "^8.2.0",
+    "md5": "^2.3.0",
+    "express": "^4.17.1"
+  }
+}
