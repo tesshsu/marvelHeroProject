@@ -13,29 +13,27 @@ app.use(cors());
 
 app.get('/api/characters', async (req, res) => {
     try {
-        const { page = 1, limit = 5 } = req.query
-        const offset = (page - 1) * limit;
-        const reqKey = `marvel_characters_offset_${offset}_limit_${limit}`;
-        let marvelCharactersData = mcache.get(reqKey);
+        const { currentPage = 1, maxPerPage = 5 } = req.query
+        const offset = (currentPage - 1) * maxPerPage;
+        const reqKey = `marvel_characters_offset_${offset}_limit_${maxPerPage}`;
 
         // Used Marvel api
         const ts = new Date().getTime().toString()
         const hash = md5(ts + config.marvel.privateKey + config.marvel.publicKey)
-        const url = `${config.marvel.baseUrl}/characters?ts=${ts}&apikey=${config.marvel.publicKey}&hash=${hash}&offset=${offset}&limit=${limit}`
+        const url = `${config.marvel.baseUrl}/characters?ts=${ts}&apikey=${config.marvel.publicKey}&hash=${hash}`
         const response = await axios.get(url)
 
-        // Fetch data if not in cache
-        if(!marvelCharactersData){
-            marvelCharactersData = response.data.data;
-            mcache.put(reqKey, marvelCharactersData, CACHE_DURATION * 1000);
-        }
+        // Fetch data in cache
+        let marvelCharactersData = response.data.data;
+        mcache.put(reqKey, marvelCharactersData, CACHE_DURATION * 1000);
 
+        // Define pagination
         const { total, count, results } = marvelCharactersData;
-        const totalPages = Math.ceil(count / limit)
-        const nextPage = page < totalPages ? +page + 1 : null
-        const prevPage = page > 1 ? +page - 1 : null
+        const totalPages = Math.ceil(total / maxPerPage)
+        const nextPage = currentPage < totalPages ? +currentPage + 1 : null
+        const prevPage = currentPage > 1 ? +currentPage - 1 : null
         const pagination = { totalPages, nextPage, prevPage }
-        //console.log('response result: ', marvelCharactersData)
+        console.log('totalPages: ', totalPages)
         res.json({ total, count, pagination , results})
     } catch (error) {
         //console.error(error)

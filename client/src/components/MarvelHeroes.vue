@@ -5,7 +5,7 @@
 
       <!-- Search form -->
       <div class="form-group">
-        <input type="text" class="form-control" placeholder="Search hero" v-model="searchTerm" @input="fetchHeroes()">
+        <input type="text" class="form-control" placeholder="Search hero" v-model="searchTerm" @input="filteredHeroes()">
       </div>
 
       <!-- Hero list -->
@@ -69,7 +69,8 @@ export default {
     return {
       searchTerm: '',
       currentPage: 1,
-      limit: 5
+      total: 100,
+      maxPerPage: 6
     }
   },
   computed: {
@@ -77,10 +78,10 @@ export default {
         return this.$store.state.heroes
       },
     pageCount() {
-      return Math.ceil(this.filteredHeroes.length / this.limit)
+      return Math.ceil(this.total / this.maxPerPage)
     },
     heroCount() {
-        return this.filteredHeroes.length
+        return this.fetchHeroes.length
      },
     isMobile() {
       return window.innerWidth < 768
@@ -100,7 +101,7 @@ export default {
      async fetchHeroes() {
         await this.$store.dispatch('fetchHeroes', {
           currentPage: this.currentPage,
-          limit: this.limit
+          maxPerPage: this.maxPerPage
         })
       },
     changePage(page) {

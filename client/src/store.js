@@ -5,21 +5,24 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        heroes: []
+        heroes: [],
+        totalPages: 0
     },
     mutations: {
-        setHeroes(state, heroes) {
+        setHeroes(state, heroes, totalPages) {
             state.heroes = heroes
+            state.totalPages = totalPages
         }
     },
     actions: {
-        async fetchHeroes({ commit }, { currentPage, limit }) {
+        async fetchHeroes({ commit }, { currentPage, maxPerPage }) {
             try {
-                const offset = (currentPage - 1) * limit
-                const url = `http://gateway.marvel.com/v1/public/characters?ts=1678861913898&apikey=46f0111ea554f723e31bf89fb79ec36f&hash=76b15589be34128e4439b10b92932b48&offset=${offset}&limit=${limit}`
+                const url = `http://localhost:3000/api/characters?currentPage=${currentPage}&maxPerPage=${maxPerPage}`
                 const response = await axios.get(url)
-                const heroes = response.data.data.results
-                commit('setHeroes', heroes)
+                const heroes = response.data.results
+                const totalPages = response.data.pagination.totalPages
+                console.log('heros', heroes)
+                commit('setHeroes', heroes, 'totalPages', totalPages)
             } catch (error) {
                 console.error(error)
             }
