@@ -5,9 +5,10 @@ const config = require('./config')
 const mcache = require('memory-cache')
 
 const app = express()
-
 const CACHE_DURATION = 120; // in seconds
 
+/* A middleware that parses the body of the request and makes it available in the req.body object. */
+app.use(express.json());
 
 app.get('/api/characters', async (req, res) => {
     try {
@@ -27,11 +28,11 @@ app.get('/api/characters', async (req, res) => {
         }
 
         const { total, count, results } = marvelCharactersData;
-        const totalPages = Math.ceil(total / limit)
+        const totalPages = Math.ceil(count / limit)
         const nextPage = page < totalPages ? +page + 1 : null
         const prevPage = page > 1 ? +page - 1 : null
         const pagination = { totalPages, nextPage, prevPage }
-        //console.log('response result: ', marvelCharactersData)
+        console.log('response result: ', marvelCharactersData)
         res.json({ total, count, pagination , results})
     } catch (error) {
         console.error(error)
@@ -44,3 +45,5 @@ const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`)
 })
+
+module.exports = app;
