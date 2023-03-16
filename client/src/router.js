@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import result from "@/components/result.vue"
+import result from "@/components/MarvelHeroes.vue"
 
 Vue.use(VueRouter)
 
 const routes = [
     {
-        path: '/result',
+        path: '/heros',
         name: 'result',
         component: result
     }

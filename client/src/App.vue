@@ -1,11 +1,17 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <h1>Heroes</h1>
+    <MarvelHeroes />
   </div>
 </template>
 
 <script>
+import MarvelHeroes from '@/components/MarvelHeroes.vue';
+
 export default {
-  name: 'App'
-}
+  name: 'App',
+  components: {
+    MarvelHeroes,
+  },
+};
 </script>
