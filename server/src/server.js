@@ -3,16 +3,17 @@ const axios = require('axios')
 const md5 = require('md5')
 const config = require('./config')
 const mcache = require('memory-cache')
-
+const cors = require('cors')
 const app = express()
 const CACHE_DURATION = 120; // in seconds
 
 /* A middleware that parses the body of the request and makes it available in the req.body object. */
 app.use(express.json());
+app.use(cors());
 
 app.get('/api/characters', async (req, res) => {
     try {
-        const { page = 1, limit = 20 } = req.query
+        const { page = 1, limit = 5 } = req.query
         const offset = (page - 1) * limit;
         const reqKey = `marvel_characters_offset_${offset}_limit_${limit}`;
         let marvelCharactersData = mcache.get(reqKey);

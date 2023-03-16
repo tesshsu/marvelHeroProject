@@ -25,6 +25,7 @@
          <paginate
            :page-count="pageCount"
            :click-handler="changePage"
+           :current-page.sync="currentPage"
            :hide-prev-next="isMobile"
            :prev-text="'Prev'"
            :next-text="'Next'"
@@ -78,6 +79,9 @@ export default {
     pageCount() {
       return Math.ceil(this.filteredHeroes.length / this.limit)
     },
+    heroCount() {
+        return this.filteredHeroes.length
+     },
     isMobile() {
       return window.innerWidth < 768
     },
@@ -93,6 +97,12 @@ export default {
   },
   methods: {
     ...mapActions(['fetchHeroes']),
+     async fetchHeroes() {
+        await this.$store.dispatch('fetchHeroes', {
+          currentPage: this.currentPage,
+          limit: this.limit
+        })
+      },
     changePage(page) {
       this.currentPage = page
     },
