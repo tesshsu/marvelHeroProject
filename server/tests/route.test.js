@@ -7,6 +7,7 @@ describe('GET /api/characters', () => {
             .get('/api/characters')
             .expect(200);
 
+        expect(response.body.total).toBeDefined();
         expect(response.body.count).toBeDefined();
         expect(response.body.results).toBeDefined();
         expect(response.body.pagination).toBeDefined();
