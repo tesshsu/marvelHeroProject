@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <h1>Heroes</h1>
     <MarvelHeroes />
   </div>
 </template>
