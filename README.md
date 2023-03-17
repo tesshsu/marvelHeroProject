@@ -26,8 +26,8 @@ npm run build && npm run serve
 Both in server and client side
 $ docker build -t marvel-app .
 
-![](C:/Users/TESS/Desktop/5.png)
-![](C:/Users/TESS/Desktop/6.png)
+![](C:/Users/TESS/Desktop/desktip.png)
+![](C:/Users/TESS/Desktop/mobile.png)
 
 ## License
 This library is released under the MIT License.

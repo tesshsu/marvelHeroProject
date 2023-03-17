@@ -13,29 +13,29 @@ app.use(cors());
 
 app.get('/api/characters', async (req, res) => {
     try {
-        const { currentPage = 1, maxPerPage = 5 } = req.query
-        const offset = (currentPage - 1) * maxPerPage;
-        const reqKey = `marvel_characters_offset_${offset}_maxPerPage_${maxPerPage}`;
-
-        // Used Marvel api
-        const ts = new Date().getTime().toString()
-        const hash = md5(ts + config.marvel.privateKey + config.marvel.publicKey)
-        const url = `${config.marvel.baseUrl}/characters?ts=${ts}&apikey=${config.marvel.publicKey}&hash=${hash}&offset=${offset}&limit=100`
-        const response = await axios.get(url)
+        const { page = 1, limit = 20 } = req.query
+        const offset = page > 0 ? (page - 1) * limit : 0;
+        const reqKey = `marvel_characters_offset_${offset}_limit_${limit}`;
+        let marvelCharactersData = mcache.get(reqKey);
 
         // Fetch data in cache
-        let marvelCharactersData = response.data.data;
-        mcache.put(reqKey, marvelCharactersData, CACHE_DURATION * 1000);
+        if(marvelCharactersData == null){
+            // Used Marvel api
+            const ts = new Date().getTime().toString()
+            const hash = md5(ts + config.marvel.privateKey + config.marvel.publicKey);
+            const url = `${config.marvel.baseUrl}/characters?ts=${ts}&apikey=${config.marvel.publicKey}&hash=${hash}&offset=${offset}&limit=${limit}`;
+            const response = await axios.get(url);
+            marvelCharactersData = response.data.data;
+            mcache.put(reqKey, marvelCharactersData, CACHE_DURATION * 1000);
+        }
 
         // Define pagination
         const { total, count, results } = marvelCharactersData;
-        const totalPages = Math.ceil(total / maxPerPage)
-        const nextPage = currentPage < totalPages ? +currentPage + 1 : null
-        const prevPage = currentPage > 1 ? +currentPage - 1 : null
-        const pagination = { totalPages, nextPage, prevPage }
-        console.log('results: ', results)
-        console.log('totalPages: ', totalPages)
-        res.json({ total, count, pagination , results})
+        const totalPages = Math.ceil(total / limit)
+        const nextPage = page < totalPages ? +page + 1 : null
+        const prevPage = page > 1 ? +page - 1 : null
+        const pagination = { totalPages, nextPage, prevPage, total, count, }
+        res.json({ pagination , results})
     } catch (error) {
         //console.error(error)
         await res.json(error)

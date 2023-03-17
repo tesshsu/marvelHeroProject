@@ -15,9 +15,9 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        async fetchHeroes({ commit }, { currentPage, maxPerPage }) {
+        async fetchHeroes({ commit }, { page, limit }) {
             try {
-                const url = `${process.env.VUE_APP_SERVER_BASE_URL}?currentPage=${currentPage}&maxPerPage=${maxPerPage}`;
+                const url = `${process.env.VUE_APP_SERVER_BASE_URL}?page=${page}&limit=${limit}`
                 const response = await axios.get(url)
                 const heroes = response.data.results
                 const totalPages = response.data.pagination.totalPages
