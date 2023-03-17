@@ -3,11 +3,6 @@
     <div class="container">
       <h1 class="text-center my-5">Marvel Heroes</h1>
 
-      <!-- Search form -->
-      <div class="form-group">
-        <input type="text" class="form-control" placeholder="Search hero" v-model="searchTerm" @input="filteredHeroes()">
-      </div>
-
       <!-- Hero list -->
       <div class="row">
         <div class="col-12 col-md-6 col-lg-4 mb-4" v-for="hero in heroes" :key="hero.id">
@@ -23,35 +18,35 @@
 
       <!-- Pagination -->
          <paginate
-           :page-count="pageCount"
-           :click-handler="changePage"
-           :current-page.sync="currentPage"
-           :hide-prev-next="isMobile"
-           :prev-text="'Prev'"
-           :next-text="'Next'"
-           :container-class="'pagination justify-content-center mt-5'"
-           :page-class="'page-item'"
-           :link-class="'page-link'"
-           :prev-class="'page-item'"
-           :next-class="'page-item'"
-           :prev-link-class="'page-link'"
-           :next-link-class="'page-link'"
-           :active-class="'active'"
-           :disabled-class="'disabled'"
-         >
-           <li class="page-item" slot="prev">
-             <button class="page-link">
-               <span>&laquo;</span>
-               <span class="sr-only">Prev</span>
-             </button>
-           </li>
-           <li class="page-item" slot="next">
-             <button class="page-link">
-               <span>&raquo;</span>
-               <span class="sr-only">Next</span>
-             </button>
-           </li>
-         </paginate>
+               :page-count="pageCount"
+               :click-handler="changePage"
+               :current-page.sync="page"
+               :hide-prev-next="isMobile"
+               :prev-text="'Prev'"
+               :next-text="'Next'"
+               :container-class="'pagination justify-content-center mt-5'"
+               :page-class="'page-item'"
+               :link-class="'page-link'"
+               :prev-class="'page-item'"
+               :next-class="'page-item'"
+               :prev-link-class="'page-link'"
+               :next-link-class="'page-link'"
+               :active-class="'active'"
+               :disabled-class="'disabled'"
+             >
+               <li class="page-item" slot="prev">
+                 <button class="page-link">
+                   <span>&laquo;</span>
+                   <span class="sr-only">Prev</span>
+                 </button>
+               </li>
+               <li class="page-item" slot="next">
+                 <button class="page-link">
+                   <span>&raquo;</span>
+                   <span class="sr-only">Next</span>
+                 </button>
+               </li>
+             </paginate>
     </div>
   </div>
 </template>
@@ -68,9 +63,8 @@ export default {
   data() {
     return {
       searchTerm: '',
-      currentPage: 1,
-      total: 100,
-      maxPerPage: 6
+      page: 1,
+      limit: 20
     }
   },
   computed: {
@@ -78,20 +72,14 @@ export default {
         return this.$store.state.heroes
       },
     pageCount() {
-      return Math.ceil(this.total / this.maxPerPage)
+      return this.$store.state.totalPages
     },
     heroCount() {
-        return this.fetchHeroes.length
+        return this.heroes.length
      },
     isMobile() {
       return window.innerWidth < 768
-    },
-    filteredHeroes() {
-        if (!this.searchTerm) {
-          return this.heroes
-        }
-        return this.heroes.filter(hero => hero.name.toLowerCase().includes(this.searchTerm.toLowerCase()))
-      }
+    }
   },
   mounted() {
     this.fetchHeroes()
@@ -100,12 +88,14 @@ export default {
     ...mapActions(['fetchHeroes']),
      async fetchHeroes() {
         await this.$store.dispatch('fetchHeroes', {
-          currentPage: this.currentPage,
-          maxPerPage: this.maxPerPage
+          page: this.page,
+          limit: this.limit
         })
       },
     changePage(page) {
-      this.currentPage = page
+      this.page = page;
+      this.limit = 6;
+      this.fetchHeroes({ page: page, limit: this.limit });
     },
     created() {
         this.fetchHeroes()
