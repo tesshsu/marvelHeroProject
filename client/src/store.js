@@ -9,7 +9,7 @@ export default new Vuex.Store({
         totalPages: 0
     },
     mutations: {
-        setHeroes(state, heroes, totalPages) {
+        setHeroes(state, { heroes, totalPages }) {
             state.heroes = heroes
             state.totalPages = totalPages
         }
@@ -17,12 +17,11 @@ export default new Vuex.Store({
     actions: {
         async fetchHeroes({ commit }, { currentPage, maxPerPage }) {
             try {
-                const url = `http://localhost:3000/api/characters?currentPage=${currentPage}&maxPerPage=${maxPerPage}`
+                const url = `${process.env.VUE_APP_SERVER_BASE_URL}?currentPage=${currentPage}&maxPerPage=${maxPerPage}`;
                 const response = await axios.get(url)
                 const heroes = response.data.results
                 const totalPages = response.data.pagination.totalPages
-                console.log('heros', heroes)
-                commit('setHeroes', heroes, 'totalPages', totalPages)
+                commit('setHeroes', { heroes, totalPages })
             } catch (error) {
                 console.error(error)
             }

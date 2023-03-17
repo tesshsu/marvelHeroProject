@@ -23,35 +23,35 @@
 
       <!-- Pagination -->
          <paginate
-           :page-count="pageCount"
-           :click-handler="changePage"
-           :current-page.sync="currentPage"
-           :hide-prev-next="isMobile"
-           :prev-text="'Prev'"
-           :next-text="'Next'"
-           :container-class="'pagination justify-content-center mt-5'"
-           :page-class="'page-item'"
-           :link-class="'page-link'"
-           :prev-class="'page-item'"
-           :next-class="'page-item'"
-           :prev-link-class="'page-link'"
-           :next-link-class="'page-link'"
-           :active-class="'active'"
-           :disabled-class="'disabled'"
-         >
-           <li class="page-item" slot="prev">
-             <button class="page-link">
-               <span>&laquo;</span>
-               <span class="sr-only">Prev</span>
-             </button>
-           </li>
-           <li class="page-item" slot="next">
-             <button class="page-link">
-               <span>&raquo;</span>
-               <span class="sr-only">Next</span>
-             </button>
-           </li>
-         </paginate>
+               :page-count="pageCount"
+               :click-handler="changePage"
+               :current-page.sync="currentPage"
+               :hide-prev-next="isMobile"
+               :prev-text="'Prev'"
+               :next-text="'Next'"
+               :container-class="'pagination justify-content-center mt-5'"
+               :page-class="'page-item'"
+               :link-class="'page-link'"
+               :prev-class="'page-item'"
+               :next-class="'page-item'"
+               :prev-link-class="'page-link'"
+               :next-link-class="'page-link'"
+               :active-class="'active'"
+               :disabled-class="'disabled'"
+             >
+               <li class="page-item" slot="prev">
+                 <button class="page-link">
+                   <span>&laquo;</span>
+                   <span class="sr-only">Prev</span>
+                 </button>
+               </li>
+               <li class="page-item" slot="next">
+                 <button class="page-link">
+                   <span>&raquo;</span>
+                   <span class="sr-only">Next</span>
+                 </button>
+               </li>
+             </paginate>
     </div>
   </div>
 </template>
@@ -69,7 +69,6 @@ export default {
     return {
       searchTerm: '',
       currentPage: 1,
-      total: 100,
       maxPerPage: 6
     }
   },
@@ -78,10 +77,10 @@ export default {
         return this.$store.state.heroes
       },
     pageCount() {
-      return Math.ceil(this.total / this.maxPerPage)
+      return this.$store.state.totalPages
     },
     heroCount() {
-        return this.fetchHeroes.length
+        return this.heroes.length
      },
     isMobile() {
       return window.innerWidth < 768
@@ -105,7 +104,9 @@ export default {
         })
       },
     changePage(page) {
-      this.currentPage = page
+      this.currentPage = page;
+      this.maxPerPage = 6;
+      this.fetchHeroes({ currentPage: page, maxPerPage: this.maxPerPage });
     },
     created() {
         this.fetchHeroes()

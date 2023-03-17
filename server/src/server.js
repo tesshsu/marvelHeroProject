@@ -15,12 +15,12 @@ app.get('/api/characters', async (req, res) => {
     try {
         const { currentPage = 1, maxPerPage = 5 } = req.query
         const offset = (currentPage - 1) * maxPerPage;
-        const reqKey = `marvel_characters_offset_${offset}_limit_${maxPerPage}`;
+        const reqKey = `marvel_characters_offset_${offset}_maxPerPage_${maxPerPage}`;
 
         // Used Marvel api
         const ts = new Date().getTime().toString()
         const hash = md5(ts + config.marvel.privateKey + config.marvel.publicKey)
-        const url = `${config.marvel.baseUrl}/characters?ts=${ts}&apikey=${config.marvel.publicKey}&hash=${hash}`
+        const url = `${config.marvel.baseUrl}/characters?ts=${ts}&apikey=${config.marvel.publicKey}&hash=${hash}&offset=${offset}&limit=100`
         const response = await axios.get(url)
 
         // Fetch data in cache
@@ -33,6 +33,7 @@ app.get('/api/characters', async (req, res) => {
         const nextPage = currentPage < totalPages ? +currentPage + 1 : null
         const prevPage = currentPage > 1 ? +currentPage - 1 : null
         const pagination = { totalPages, nextPage, prevPage }
+        console.log('results: ', results)
         console.log('totalPages: ', totalPages)
         res.json({ total, count, pagination , results})
     } catch (error) {
