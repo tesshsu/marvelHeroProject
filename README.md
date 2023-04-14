@@ -5,8 +5,11 @@ Application mobile  first  all Marvel api build with node and Vue
 
 ### Server side
 Create a new server/.env file and add your apikey and hash credentials as follows:
+
 MARVEL_PUBLIC_KEY
+
 MARVEL_PRIVATE_KEY
+
 MARVEL_BASE_URL='http://gateway.marvel.com/v1/public'
 
 ### Client side
